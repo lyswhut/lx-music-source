@@ -1,7 +1,7 @@
 /*!
  * @name A lx-music source
- * @description v1.0.1
- * @version v1.0.1
+ * @description v1.0.2
+ * @version v1.0.2
  */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
@@ -95,8 +95,7 @@ const utils = {
 
   musicUrl({ hash, albumId }, quality) {
     // quality = qualitys[quality]
-    let target_url = `https://wwwapi.kugou.com/yy/index.php?r=play/getdata&hash=${hash}&dfid=dfid&mid=mid&platid=4&album_id=${albumId}`
-
+    let target_url = `https://wwwapi.kugou.com/yy/index.php?r=play/getdata&hash=${hash}&platid=4&album_id=${albumId}&mid=00000000000000000000000000000000`
     return new Promise((resolve, reject) => {
       console.log(hash, quality)
       request(target_url, {
@@ -109,7 +108,7 @@ const utils = {
         if (data.status !== 1) return reject(new Error(data.err_code))
         if (data.data.privilege > 9) return reject(new Error('failed'))
 
-        resolve(resp.body.data.play_url)
+        resolve(resp.body.data.play_backup_url)
       })
     })
   },

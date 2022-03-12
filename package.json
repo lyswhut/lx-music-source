@@ -1,6 +1,6 @@
 {
   "name": "lx-music-source",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A lx-music source",
   "publishConfig": {
     "access": "public"
