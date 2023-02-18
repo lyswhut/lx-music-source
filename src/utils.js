@@ -1,4 +1,4 @@
-import { version, utils } from './lx'
+import { version, utils, send, EVENT_NAMES } from './lx'
 
 
 export const buf2hex = buffer => { // buffer is an ArrayBuffer
@@ -17,3 +17,11 @@ export const aesEncrypt = (data, eapiKey, iv, mode) => {
 }
 
 export const md5 = str => utils.crypto.md5(str)
+
+
+export const showUpdateAlert = () => {
+  send(EVENT_NAMES.updateAlert, {
+    log: 'hello world',
+    updateUrl: 'https://xxx.com',
+  })
+}

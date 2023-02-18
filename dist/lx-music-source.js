@@ -8,7 +8,7 @@
 var __webpack_exports__ = {};
 
 ;// CONCATENATED MODULE: ./src/lx.js
-const { EVENT_NAMES, on, send, request, utils: lxUtils, version } = window.lx
+const { EVENT_NAMES: lx_EVENT_NAMES, on, send: lx_send, request, utils: lxUtils, version } = window.lx
 console.log(window.lx)
 
 
@@ -224,6 +224,14 @@ const aesEncrypt = (data, eapiKey, iv, mode) => {
 
 const md5 = str => utils.crypto.md5(str)
 
+
+const showUpdateAlert = () => {
+  send(EVENT_NAMES.updateAlert, {
+    log: 'hello world',
+    updateUrl: 'https://xxx.com',
+  })
+}
+
 ;// CONCATENATED MODULE: ./src/apis/wy.js
 
 
@@ -296,7 +304,7 @@ const mg_qualitys = {
   '128k': 'PQ',
   '320k': 'HQ',
   flac: 'SQ',
-  flac32bit: 'ZQ',
+  flac24bit: 'ZQ',
 }
 
 // https://github.com/listen1/listen1_chrome_extension/blob/master/js/provider/migu.js
@@ -305,7 +313,7 @@ const mg_qualitys = {
     name: '咪咕音乐',
     type: 'music',
     actions: ['musicUrl'],
-    qualitys: ['128k', '320k', 'flac', 'flac32bit'],
+    qualitys: ['128k', '320k', 'flac', 'flac24bit'],
   },
 
   musicUrl({ songmid }, quality) {
@@ -403,7 +411,7 @@ const mg_qualitys = {
 
 // console.log(window.lx)
 
-on(EVENT_NAMES.request, ({ source, action, info }) => {
+on(lx_EVENT_NAMES.request, ({ source, action, info }) => {
   switch (action) {
     case 'musicUrl':
       return apis[source].musicUrl(info.musicInfo, info.type).catch((err) => {
@@ -418,7 +426,7 @@ for (const [source, apiInfo] of Object.entries(apis)) {
   sources[source] = apiInfo.info
 }
 
-send(EVENT_NAMES.inited, {
+lx_send(lx_EVENT_NAMES.inited, {
   status: true,
   // openDevTools: true,
   // eslint-disable-next-line no-undef

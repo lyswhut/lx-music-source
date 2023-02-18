@@ -4,7 +4,7 @@ const qualitys = {
   '128k': 'PQ',
   '320k': 'HQ',
   flac: 'SQ',
-  flac32bit: 'ZQ',
+  flac24bit: 'ZQ',
 }
 
 // https://github.com/listen1/listen1_chrome_extension/blob/master/js/provider/migu.js
@@ -13,7 +13,7 @@ export default {
     name: '咪咕音乐',
     type: 'music',
     actions: ['musicUrl'],
-    qualitys: ['128k', '320k', 'flac', 'flac32bit'],
+    qualitys: ['128k', '320k', 'flac', 'flac24bit'],
   },
 
   musicUrl({ songmid }, quality) {
