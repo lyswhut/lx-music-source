@@ -1,7 +1,7 @@
 /*!
  * @name A lx-music source
- * @description v1.0.2
- * @version v1.0.2
+ * @description v1.0.3
+ * @version v1.0.3
  */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
@@ -31,12 +31,12 @@ const utils = {
 ;// CONCATENATED MODULE: ./src/apis/kw.js
 
 
-// const qualitys = {
-//   '128k': 'mp3',
-//   '320k': 'mp3',
-//   ape: 'ape',
-//   flac: 'flac',
-// }
+const qualitys = {
+  '128k': '128kmp3',
+  '320k': '320kmp3',
+  // ape: 'ape',
+  // flac: 'flac',
+}
 
 
 /* harmony default export */ const kw = ({
@@ -44,13 +44,13 @@ const utils = {
     name: '酷我音乐',
     type: 'music',
     actions: ['musicUrl'],
-    qualitys: ['128k'],
+    qualitys: ['128k', '320k'],
   },
 
   musicUrl({ songmid }, quality) {
-    // quality = qualitys[quality]
+    quality = qualitys[quality]
 
-    const target_url = `http://www.kuwo.cn/api/v1/www/music/playUrl?mid=${songmid}&type=music&httpsStatus=1`
+    const target_url = `http://www.kuwo.cn/api/v1/www/music/playUrl?mid=${songmid}&type=convert_url3&br=${quality}`
     /* const target_url = 'https://www.kuwo.cn/url?'
       + `format=mp3&rid=${song_id}&response=url&type=convert_url3&br=128kmp3&from=web`;
     https://m.kuwo.cn/newh5app/api/mobile/v1/music/src/${song_id} */
@@ -236,7 +236,7 @@ const showUpdateAlert = () => {
 
 
 
-const qualitys = {
+const wy_qualitys = {
   '128k': 128000,
   '320k': 320000,
   flac: 999000,
@@ -265,7 +265,7 @@ let cookie = 'os=pc'
   },
 
   musicUrl({ songmid }, quality) {
-    quality = qualitys[quality]
+    quality = wy_qualitys[quality]
     const target_url = 'https://interface3.music.163.com/eapi/song/enhance/player/url'
     const eapiUrl = '/api/song/enhance/player/url'
 
