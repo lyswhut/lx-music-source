@@ -1,7 +1,7 @@
 /*!
  * @name A lx-music source
- * @description v1.0.5
- * @version v1.0.5
+ * @description v1.0.6
+ * @version v1.0.6
  */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
@@ -86,7 +86,7 @@ const createToken = (cookieToken, currentKey) => {
 }
 const parseCookieToken = (cookies) => {
   if (!cookies) return ''
-  let cookieToken = cookies.find(str => str.startsWith('Hm_Iuvt_'))
+  let cookieToken = Array.isArray(cookies) ? cookies.find(str => str.startsWith('Hm_Iuvt_')) : cookies.match(/Hm_Iuvt_\w+=\w+;/)?.[0]
   if (!cookieToken) return ''
   cookieToken = cookieToken.split(';')[0]
   cookie = cookieToken
@@ -403,7 +403,7 @@ const mg_qualitys = {
     name: '咪咕音乐',
     type: 'music',
     actions: ['musicUrl'],
-    qualitys: ['128k', '320k', 'flac', 'flac24bit'],
+    qualitys: ['128k'],
   },
 
   musicUrl({ songmid }, quality) {

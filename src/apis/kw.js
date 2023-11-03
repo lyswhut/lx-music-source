@@ -55,7 +55,7 @@ const createToken = (cookieToken, currentKey) => {
 }
 const parseCookieToken = (cookies) => {
   if (!cookies) return ''
-  let cookieToken = cookies.find(str => str.startsWith('Hm_Iuvt_'))
+  let cookieToken = Array.isArray(cookies) ? cookies.find(str => str.startsWith('Hm_Iuvt_')) : cookies.match(/Hm_Iuvt_\w+=\w+;/)?.[0]
   if (!cookieToken) return ''
   cookieToken = cookieToken.split(';')[0]
   cookie = cookieToken

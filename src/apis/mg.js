@@ -13,7 +13,7 @@ export default {
     name: '咪咕音乐',
     type: 'music',
     actions: ['musicUrl'],
-    qualitys: ['128k', '320k', 'flac', 'flac24bit'],
+    qualitys: ['128k'],
   },
 
   musicUrl({ songmid }, quality) {
