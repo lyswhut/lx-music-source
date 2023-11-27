@@ -20,8 +20,8 @@ module.exports = {
   //   ],
   // },
   plugins: [
-    new webpack.BannerPlugin(`@name A lx-music source
-@description v${packageJson.version}
+    new webpack.BannerPlugin(`@name Free listen
+@description A lx-music source
 @version v${packageJson.version}`,
     ),
     new webpack.DefinePlugin({

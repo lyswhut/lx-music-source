@@ -1,6 +1,6 @@
 {
   "name": "lx-music-source",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A lx-music source",
   "publishConfig": {
     "access": "public"
@@ -25,7 +25,7 @@
   "homepage": "https://github.com/lyswhut/lx-music-source#readme",
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "eslint": "^8.52.0",
+    "eslint": "^8.54.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-node": "^11.1.0",

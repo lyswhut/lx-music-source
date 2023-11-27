@@ -1,15 +1,15 @@
 /*!
- * @name A lx-music source
- * @description v1.0.6
- * @version v1.0.6
+ * @name Free listen
+ * @description A lx-music source
+ * @version v1.0.7
  */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 var __webpack_exports__ = {};
 
 ;// CONCATENATED MODULE: ./src/lx.js
-const { EVENT_NAMES: lx_EVENT_NAMES, on, send: lx_send, request, utils: lxUtils, version } = window.lx
-console.log(window.lx)
+const { EVENT_NAMES: lx_EVENT_NAMES, on, send: lx_send, request, utils: lxUtils, version } = globalThis.lx
+// console.log(globalThis.lx)
 
 
 // https://github.com/lyswhut/lx-music-desktop/blob/master/FAQ.md#windowlxutils
@@ -234,7 +234,7 @@ const fileConfig = {
     qualitys: ['128k'],
   },
 
-  musicUrl({ songmid }, quality) {
+  musicUrl({ songmid, strMediaMid }, quality) {
     const target_url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
     // thanks to https://github.com/Rain120/qq-music-api/blob/2b9cb811934888a532545fbd0bf4e4ab2aea5dbe/routers/context/getMusicPlay.js
     const guid = '10000'
@@ -242,9 +242,9 @@ const fileConfig = {
     const uin = '0'
 
     const fileInfo = fileConfig[quality]
-    const file =
-      songmidList.length === 1 &&
-      `${fileInfo.s}${songmid}${songmid}${fileInfo.e}`
+    const file = `${fileInfo.s}${strMediaMid}${fileInfo.e}`
+      /* songmidList.length === 1 &&
+      `${fileInfo.s}${songmid}${songmid}${fileInfo.e}`*/ 
 
     const reqData = {
       req_0: {
@@ -321,6 +321,26 @@ const showUpdateAlert = () => {
     updateUrl: 'https://xxx.com',
   })
 }
+
+// https://stackoverflow.com/a/53387532
+const compareVersions = ((prep, l, i, r) => (a, b) => {
+  a = prep(a)
+  b = prep(b)
+  l = Math.max(a.length, b.length)
+  i = 0
+  r = i
+  // convert into integer, uncluding undefined values
+  while (!r && i < l) r = ~~a[i] - ~~b[i++]
+
+  return r < 0 ? -1 : (r ? 1 : 0)
+})(t => ('' + t)
+// treat non-numerical characters as lower version
+// replacing them with a negative number based on charcode of first character
+  .replace(/[^\d.]+/g, c => '.' + (c.replace(/[\W_]+/, '').toUpperCase().charCodeAt(0) - 65536) + '.')
+// remove trailing "." and "0" if followed by non-numerical characters (1.0.0b);
+  .replace(/(?:\.0+)*(\.-\d+(?:\.\d+)?)\.*$/g, '$1')
+// return array
+  .split('.'))
 
 ;// CONCATENATED MODULE: ./src/apis/wy.js
 
@@ -495,7 +515,57 @@ const mg_qualitys = {
   mg: mg,
 });
 
+;// CONCATENATED MODULE: ./package.json
+const package_namespaceObject = JSON.parse('{"u2":"lx-music-source","i8":"1.0.7","v":"lyswhut"}');
+;// CONCATENATED MODULE: ./src/update.js
+
+
+
+
+const address = [
+  `https://raw.githubusercontent.com/${package_namespaceObject.v}/${package_namespaceObject.u2}/master`,
+  `https://cdn.jsdelivr.net/gh/${package_namespaceObject.v}/${package_namespaceObject.u2}`,
+  `https://fastly.jsdelivr.net/gh/${package_namespaceObject.v}/${package_namespaceObject.u2}`,
+  `https://gcore.jsdelivr.net/gh/${package_namespaceObject.v}/${package_namespaceObject.u2}`,
+]
+
+const getLatestVersion = async(url, retryNum = 0) => {
+  return new Promise((resolve, reject) => {
+    request(url, {
+      timeout: 10000,
+    }, (err, resp) => {
+      if (err || resp.statusCode != 200) {
+        ++retryNum >= 3
+          ? reject(err || new Error(resp.statusMessage || resp.statusCode))
+          : getLatestVersion(url, retryNum).then(resolve).catch(reject)
+      } else resolve(resp.body)
+    })
+  }).then(info => {
+    if (info.version == null) throw new Error('failed')
+    return info.version
+  })
+}
+
+const getVersion = async(index = 0) => {
+  return getLatestVersion(address[index] + '/package.json').then(version => {
+    return {
+      version,
+      url: address[index] + '/dist/lx-music-source.js',
+    }
+  }).catch(async(err) => {
+    index++
+    if (index >= address.length) throw err
+    return getVersion(index)
+  })
+}
+
+const checkLatestVersion = async() => {
+  const remoteVersion = await getVersion()
+  return compareVersions(package_namespaceObject.i8, remoteVersion.version) < 0 ? remoteVersion : null
+}
+
 ;// CONCATENATED MODULE: ./src/index.js
+
 
 
 
@@ -522,6 +592,11 @@ lx_send(lx_EVENT_NAMES.inited, {
   // eslint-disable-next-line no-undef
   openDevTools: "production" === 'development',
   sources,
+})
+
+checkLatestVersion().then((version) => {
+  if (!version) return
+  lx_send(lx_EVENT_NAMES.updateAlert, { log: '发现新版本 v' + version.version, updateUrl: version.url })
 })
 
 /******/ })()

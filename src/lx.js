@@ -1,5 +1,5 @@
 const { EVENT_NAMES, on, send, request, utils: lxUtils, version } = globalThis.lx
-console.log(globalThis.lx)
+// console.log(globalThis.lx)
 
 
 // https://github.com/lyswhut/lx-music-desktop/blob/master/FAQ.md#windowlxutils

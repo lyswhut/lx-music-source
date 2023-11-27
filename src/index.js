@@ -1,5 +1,6 @@
 import { EVENT_NAMES, on, send } from './lx'
 import apis from './apis'
+import { checkLatestVersion } from './update'
 
 // console.log(window.lx)
 
@@ -24,4 +25,9 @@ send(EVENT_NAMES.inited, {
   // eslint-disable-next-line no-undef
   openDevTools: mode === 'development',
   sources,
+})
+
+checkLatestVersion().then((version) => {
+  if (!version) return
+  send(EVENT_NAMES.updateAlert, { log: '发现新版本 v' + version.version, updateUrl: version.url })
 })
