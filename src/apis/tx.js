@@ -27,7 +27,7 @@ export default {
     qualitys: ['128k'],
   },
 
-  musicUrl({ songmid }, quality) {
+  musicUrl({ songmid, strMediaMid }, quality) {
     const target_url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
     // thanks to https://github.com/Rain120/qq-music-api/blob/2b9cb811934888a532545fbd0bf4e4ab2aea5dbe/routers/context/getMusicPlay.js
     const guid = '10000'
@@ -35,9 +35,9 @@ export default {
     const uin = '0'
 
     const fileInfo = fileConfig[quality]
-    const file =
-      songmidList.length === 1 &&
-      `${fileInfo.s}${songmid}${songmid}${fileInfo.e}`
+    const file = `${fileInfo.s}${strMediaMid}${fileInfo.e}`
+      /* songmidList.length === 1 &&
+      `${fileInfo.s}${songmid}${songmid}${fileInfo.e}`*/ 
 
     const reqData = {
       req_0: {
