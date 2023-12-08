@@ -1,7 +1,7 @@
 /*!
  * @name Free listen
  * @description A lx-music source
- * @version v1.0.7
+ * @version v1.0.8
  */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
@@ -399,8 +399,8 @@ let wy_cookie = 'os=pc'
         if (resp.headers.cookie) wy_cookie = resp.headers.cookie
 
         let res_data = resp.body
-        const { url } = res_data.data[0]
-        if (!url) return reject(new Error('failed'))
+        const { url, freeTrialInfo } = res_data.data[0]
+        if (!url || freeTrialInfo) return reject(new Error('failed'))
         resolve(url)
       })
     })
@@ -516,7 +516,7 @@ const mg_qualitys = {
 });
 
 ;// CONCATENATED MODULE: ./package.json
-const package_namespaceObject = JSON.parse('{"u2":"lx-music-source","i8":"1.0.7","v":"lyswhut"}');
+const package_namespaceObject = JSON.parse('{"u2":"lx-music-source","i8":"1.0.8","v":"lyswhut"}');
 ;// CONCATENATED MODULE: ./src/update.js
 
 
