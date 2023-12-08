@@ -54,8 +54,8 @@ export default {
         if (resp.headers.cookie) cookie = resp.headers.cookie
 
         let res_data = resp.body
-        const { url } = res_data.data[0]
-        if (!url) return reject(new Error('failed'))
+        const { url, freeTrialInfo } = res_data.data[0]
+        if (!url || freeTrialInfo) return reject(new Error('failed'))
         resolve(url)
       })
     })
