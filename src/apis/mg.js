@@ -73,7 +73,7 @@ export default {
         method: 'GET',
         headers: {
           channel: '0146951',
-          uid: 1234,
+          uid: '0',
         },
       }, (err, resp) => {
         console.log(resp.body)
@@ -83,7 +83,7 @@ export default {
 
         if (playUrl.startsWith('//')) playUrl = `https:${playUrl}`
 
-        resolve(playUrl.replace(/\+/g, '%2B'))
+        resolve(playUrl.replace(/\+/g, '%2B').split('?')[0])
       })
     })
   },
