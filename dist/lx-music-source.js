@@ -1,14 +1,17 @@
 /*!
  * @name Free listen
  * @description A lx-music source
- * @version v1.0.8
+ * @version v1.1.0
+ * @wy_token null
+ * @wy_token_desc 如果你有网易音乐的会员，可启用vip歌曲、更高音质的支持，将上面 @wy_token null 中的 null 改为你的token即可，token获取方式看常见问题歌单导入
+ * @wy_token_desc 需要注意的是，自定义 token 存在导致账号被封禁的风险，token是账号的临时秘钥，注意不要随意分享
  */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 var __webpack_exports__ = {};
 
 ;// CONCATENATED MODULE: ./src/lx.js
-const { EVENT_NAMES: lx_EVENT_NAMES, on, send: lx_send, request, utils: lxUtils, version } = globalThis.lx
+const { EVENT_NAMES: lx_EVENT_NAMES, on, send: lx_send, request, utils: lxUtils, version, currentScriptInfo } = globalThis.lx
 // console.log(globalThis.lx)
 
 
@@ -25,6 +28,10 @@ const utils = {
     rsaEncrypt: lxUtils.crypto.rsaEncrypt,
   },
 }
+
+const currentScript = currentScriptInfo
+  ? currentScriptInfo.rawScript
+  : document.getElementsByTagName('script')[0].innerText
 
 
 
@@ -346,6 +353,14 @@ const compareVersions = ((prep, l, i, r) => (a, b) => {
 
 
 
+const parse = (str) => {
+  let comment = /^\/\*(?:.|\n)+?\*\//.exec(str)?.[0]
+  if (!comment) return ''
+  let token = /\*\s*@wy_token\s+(.+)/.exec(comment)?.[1]?.trim()
+  return (!token || token == 'null') ? '' : token
+}
+const wy_token = parse(currentScript)
+
 const wy_qualitys = {
   '128k': 128000,
   '320k': 320000,
@@ -364,6 +379,7 @@ const eapi = (url, object) => {
 }
 
 let wy_cookie = 'os=pc'
+if (wy_token) wy_cookie = `MUSIC_U=${wy_token}; ` + wy_cookie
 
 // https://github.com/listen1/listen1_chrome_extension/blob/master/js/provider/netease.js
 /* harmony default export */ const wy = ({
@@ -371,7 +387,7 @@ let wy_cookie = 'os=pc'
     name: '网易音乐',
     type: 'music',
     actions: ['musicUrl'],
-    qualitys: ['128k'],
+    qualitys: wy_token ? ['128k', '320k', 'flac'] : ['128k'],
   },
 
   musicUrl({ songmid }, quality) {
@@ -516,7 +532,7 @@ const mg_qualitys = {
 });
 
 ;// CONCATENATED MODULE: ./package.json
-const package_namespaceObject = JSON.parse('{"u2":"lx-music-source","i8":"1.0.8","v":"lyswhut"}');
+const package_namespaceObject = JSON.parse('{"u2":"lx-music-source","i8":"1.1.0","v":"lyswhut"}');
 ;// CONCATENATED MODULE: ./src/update.js
 
 

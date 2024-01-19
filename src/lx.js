@@ -1,4 +1,4 @@
-const { EVENT_NAMES, on, send, request, utils: lxUtils, version } = globalThis.lx
+const { EVENT_NAMES, on, send, request, utils: lxUtils, version, currentScriptInfo } = globalThis.lx
 // console.log(globalThis.lx)
 
 
@@ -16,6 +16,10 @@ const utils = {
   },
 }
 
+const currentScript = currentScriptInfo
+  ? currentScriptInfo.rawScript
+  : document.getElementsByTagName('script')[0].innerText
+
 export {
   EVENT_NAMES,
   on,
@@ -23,4 +27,5 @@ export {
   request,
   utils,
   version,
+  currentScript,
 }

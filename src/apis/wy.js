@@ -1,5 +1,13 @@
-import { request } from '../lx'
+import { request, currentScript } from '../lx'
 import { buf2hex, aesEncrypt, md5 } from '../utils'
+
+const parse = (str) => {
+  let comment = /^\/\*(?:.|\n)+?\*\//.exec(str)?.[0]
+  if (!comment) return ''
+  let token = /\*\s*@wy_token\s+(.+)/.exec(comment)?.[1]?.trim()
+  return (!token || token == 'null') ? '' : token
+}
+const token = parse(currentScript)
 
 const qualitys = {
   '128k': 128000,
@@ -19,6 +27,7 @@ const eapi = (url, object) => {
 }
 
 let cookie = 'os=pc'
+if (token) cookie = `MUSIC_U=${token}; ` + cookie
 
 // https://github.com/listen1/listen1_chrome_extension/blob/master/js/provider/netease.js
 export default {
@@ -26,7 +35,7 @@ export default {
     name: '网易音乐',
     type: 'music',
     actions: ['musicUrl'],
-    qualitys: ['128k'],
+    qualitys: token ? ['128k', '320k', 'flac'] : ['128k'],
   },
 
   musicUrl({ songmid }, quality) {
