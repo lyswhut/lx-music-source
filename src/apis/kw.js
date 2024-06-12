@@ -69,29 +69,44 @@ const getToken = () => new Promise((resolve, reject) => {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:82.0) Gecko/20100101 Firefox/82.0',
       Referer: 'http://www.kuwo.cn/',
     },
-  }, function(error, response) {
+  }, async function(error, response) {
     if (error) return reject(new Error('failed'))
     const token = parseCookieToken(response.headers['set-cookie'])
     if (!token) return reject(new Error('Invalid cookie'))
-    const result = response.body.match(/app\.\w+\.js/)
+    const result = response.body.match(/https?:\/\/[/.\w]+\/kw-www\/\w+\.js/g)
     if (result) {
-      request(`https://h5static.kuwo.cn/www/kw-www/${result[0]}`, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:82.0) Gecko/20100101 Firefox/82.0',
-          Referer: 'http://www.kuwo.cn/',
-        },
-      }, function(error, response) {
-        if (error) return resolve(createToken(token, defaultKey))
-        const result = response.body.match(/Hm_Iuvt_(\w+)/)
-        if (result) {
-          resolve(createToken(token, result[0]))
-        } else resolve(createToken(token, defaultKey))
+      const getAppToken = (url) => new Promise((resolve) => {
+        request(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:82.0) Gecko/20100101 Firefox/82.0',
+            Referer: 'http://www.kuwo.cn/',
+          },
+        }, function(error, response) {
+          if (error) return resolve('')
+          const result = response.body.match(/Hm_Iuvt_(\w+)/)
+          if (result) {
+            resolve(createToken(token, result[0]))
+          } else resolve('')
+        })
       })
+      const appRxp = /app\.\w+\.js/
+      const index = result.findIndex(l => appRxp.test(l))
+      if (index > -1) {
+        const token = getAppToken(result[index])
+        if (token) return resolve(token)
+        result.splice(index, 1)
+      }
+      while (result.length) {
+        const token = await getAppToken(result.pop())
+        if (token) return resolve(token)
+      }
+      resolve(createToken(token, defaultKey))
     } else {
       resolve(createToken(token, defaultKey))
     }
   })
 })
+
 
 export default {
   info: {

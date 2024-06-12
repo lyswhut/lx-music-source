@@ -1,7 +1,7 @@
 /*!
  * @name Free listen
  * @description A lx-music source
- * @version v1.1.1
+ * @version v1.1.2
  * @wy_token null
  * @wy_token_desc 如果你有网易音乐的会员，可启用vip歌曲、更高音质的支持，将上面 @wy_token null 中的 null 改为你的token即可，token获取方式看常见问题歌单导入
  * @wy_token_desc 需要注意的是，自定义 token 存在导致账号被封禁的风险，token是账号的临时秘钥，注意不要随意分享
@@ -107,29 +107,44 @@ const getToken = () => new Promise((resolve, reject) => {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:82.0) Gecko/20100101 Firefox/82.0',
       Referer: 'http://www.kuwo.cn/',
     },
-  }, function(error, response) {
+  }, async function(error, response) {
     if (error) return reject(new Error('failed'))
     const token = parseCookieToken(response.headers['set-cookie'])
     if (!token) return reject(new Error('Invalid cookie'))
-    const result = response.body.match(/app\.\w+\.js/)
+    const result = response.body.match(/https?:\/\/[/.\w]+\/kw-www\/\w+\.js/g)
     if (result) {
-      request(`https://h5static.kuwo.cn/www/kw-www/${result[0]}`, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:82.0) Gecko/20100101 Firefox/82.0',
-          Referer: 'http://www.kuwo.cn/',
-        },
-      }, function(error, response) {
-        if (error) return resolve(createToken(token, defaultKey))
-        const result = response.body.match(/Hm_Iuvt_(\w+)/)
-        if (result) {
-          resolve(createToken(token, result[0]))
-        } else resolve(createToken(token, defaultKey))
+      const getAppToken = (url) => new Promise((resolve) => {
+        request(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:82.0) Gecko/20100101 Firefox/82.0',
+            Referer: 'http://www.kuwo.cn/',
+          },
+        }, function(error, response) {
+          if (error) return resolve('')
+          const result = response.body.match(/Hm_Iuvt_(\w+)/)
+          if (result) {
+            resolve(createToken(token, result[0]))
+          } else resolve('')
+        })
       })
+      const appRxp = /app\.\w+\.js/
+      const index = result.findIndex(l => appRxp.test(l))
+      if (index > -1) {
+        const token = getAppToken(result[index])
+        if (token) return resolve(token)
+        result.splice(index, 1)
+      }
+      while (result.length) {
+        const token = await getAppToken(result.pop())
+        if (token) return resolve(token)
+      }
+      resolve(createToken(token, defaultKey))
     } else {
       resolve(createToken(token, defaultKey))
     }
   })
 })
+
 
 /* harmony default export */ const kw = ({
   info: {
@@ -532,17 +547,17 @@ const mg_qualitys = {
 });
 
 ;// CONCATENATED MODULE: ./package.json
-const package_namespaceObject = JSON.parse('{"u2":"lx-music-source","i8":"1.1.1","v":"lyswhut"}');
+const package_namespaceObject = /*#__PURE__*/JSON.parse('{"UU":"lx-music-source","rE":"1.1.2","cy":"lyswhut"}');
 ;// CONCATENATED MODULE: ./src/update.js
 
 
 
 
 const address = [
-  `https://raw.githubusercontent.com/${package_namespaceObject.v}/${package_namespaceObject.u2}/master`,
-  `https://cdn.jsdelivr.net/gh/${package_namespaceObject.v}/${package_namespaceObject.u2}`,
-  `https://fastly.jsdelivr.net/gh/${package_namespaceObject.v}/${package_namespaceObject.u2}`,
-  `https://gcore.jsdelivr.net/gh/${package_namespaceObject.v}/${package_namespaceObject.u2}`,
+  `https://raw.githubusercontent.com/${package_namespaceObject.cy}/${package_namespaceObject.UU}/master`,
+  `https://cdn.jsdelivr.net/gh/${package_namespaceObject.cy}/${package_namespaceObject.UU}`,
+  `https://fastly.jsdelivr.net/gh/${package_namespaceObject.cy}/${package_namespaceObject.UU}`,
+  `https://gcore.jsdelivr.net/gh/${package_namespaceObject.cy}/${package_namespaceObject.UU}`,
 ]
 
 const getLatestVersion = async(url, retryNum = 0) => {
@@ -577,7 +592,7 @@ const getVersion = async(index = 0) => {
 
 const checkLatestVersion = async() => {
   const remoteVersion = await getVersion()
-  return compareVersions(package_namespaceObject.i8, remoteVersion.version) < 0 ? remoteVersion : null
+  return compareVersions(package_namespaceObject.rE, remoteVersion.version) < 0 ? remoteVersion : null
 }
 
 ;// CONCATENATED MODULE: ./src/index.js
